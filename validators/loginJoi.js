@@ -5,4 +5,4 @@ const schema = joi.object({
   password: joi.string().required().min(6).max(50),
 });
 
-module.exports = schema.validate;
+module.exports = schema;

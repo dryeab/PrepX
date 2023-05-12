@@ -1,15 +1,4 @@
-require("dotenv").config();
-const nodemailer = require("nodemailer");
-
-let transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 465,
-  secure: true,
-  auth: {
-    user: process.env.EMAIL_SENDER,
-    pass: process.env.EMAIL_PASSWORD,
-  },
-});
+const { transporter } = require("../config");
 
 message = `
 <!DOCTYPE html>
@@ -73,7 +62,7 @@ message = `
 </html>
 `;
 
-module.exports = async (to, code) => {
+const sendMail = async (to, code) => {
   await transporter.sendMail({
     from: "PrepX",
     to: to,
@@ -82,3 +71,5 @@ module.exports = async (to, code) => {
   });
   return code;
 };
+
+module.exports = sendMail;

@@ -1,7 +1,6 @@
-const mongoose = require("mongoose");
-const capitalize = require("../utils/capitalize");
-const schema = require("../validators/contributorJoi");
-const codeGenerator = require("../utils/codeGenerator");
+const { mongoose } = require("../config");
+const { capitalize, codeGenerator } = require("../utils");
+const { contributorJoi } = require("../validators");
 
 const contributorSchema = mongoose.Schema({
   firstName: {
@@ -86,7 +85,7 @@ const contributorSchema = mongoose.Schema({
 });
 
 contributorSchema.statics.validate = (contributor) =>
-  schema.validate(contributor);
+  contributorJoi.validate(contributor);
 
 contributorSchema.pre("save", function (next) {
   this.updatedAt = Date.now();

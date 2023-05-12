@@ -1,10 +1,7 @@
+const { Contributor } = require("../../models");
+const { BAD_REQUEST, NOT_FOUND, UNAUTHORIZED } = require("../../utils");
+
 const router = require("express").Router();
-const Contributor = require("../../models/Contributor");
-const {
-  BAD_REQUEST,
-  NOT_FOUND,
-  UNAUTHORIZED,
-} = require("../../utils/statusCodes");
 
 // verify the verification code sent to a user
 router.post("/verify", async (req, res) => {

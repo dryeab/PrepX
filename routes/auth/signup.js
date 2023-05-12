@@ -1,14 +1,14 @@
-const Contributor = require("../../models/Contributor");
-const router = require("express").Router();
-const uploadFields = require("../../middlewares/multerUpload");
-const sendMail = require("../../utils/sendMail");
+const { Contributor } = require("../../models");
+const { upload } = require("../../middlewares");
+const { sendMail } = require("../../utils");
+const { BAD_REQUEST, CREATED } = require("../../utils");
 
-const { BAD_REQUEST, CREATED } = require("../../utils/statusCodes");
+const router = require("express").Router();
 
 //#region contributor
 router.post(
-  "/signup/contributor",
-  uploadFields([
+  "/contributor",
+  upload.fields([
     { name: "photo", maxCount: 1 },
     { name: "passport", maxCount: 1 },
     { name: "cv", maxCount: 1 },
@@ -18,6 +18,7 @@ router.post(
     var { error } = Contributor.validate({ ...req.body, ...req.files });
 
     if (error != null) {
+      //TODO: delete uploaded files
       return res.status(BAD_REQUEST).send(error.message);
     }
 
@@ -54,9 +55,5 @@ router.post(
 //#region admin
 const adminSignup = (req, res) => {};
 //#endregion admin
-
-//#region student
-const studentSignup = (req, res) => {};
-//#endregion student
 
 module.exports = router;

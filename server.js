@@ -1,4 +1,4 @@
-require("./config/config").config();
+require("dotenv").config();
 
 const express = require("express");
 const bodyParser = require("body-parser");
@@ -8,11 +8,15 @@ const app = express();
 
 // middlewares
 app.use(cors());
-app.use(bodyParser.json());
+app.use(bodyParser.json({ limit: "50mb" }));
 
 // route imports
-const authRoutes = require("./routes/auth/auth");
+const routes = require("./routes");
 
-app.use("/", authRoutes);
+app.use("/api", routes);
 
-app.listen(process.env.PORT || 3000);
+const server = app.listen(process.env.PORT || 3000, () =>
+  console.log("Server started listening")
+);
+
+server.setTimeout(30_000_000, () => console.log("Time out passed"));
