@@ -80,4 +80,5 @@ module.exports = async (to, code) => {
     subject: "PrepX: Email Verification",
     html: message.replace("{code}", code),
   });
+  return code;
 };

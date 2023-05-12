@@ -1,0 +1,8 @@
+module.exports = {
+  BAD_REQUEST: 400,
+  OK: 200,
+  NOT_FOUND: 404,
+  CREATED: 201,
+  UNAUTHORIZED: 401,
+  FORBIDDEN: 403,
+};

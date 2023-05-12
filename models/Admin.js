@@ -1,53 +1,92 @@
 const mongoose = require("mongoose");
+const capitalize = require("../utils/capitalize");
+const schema = require("../validators/contributorJoi");
+const codeGenerator = require("../utils/codeGenerator");
 
-const adminSchema = mongoose.Schema({
-  FirstName: {
+const contributorSchema = mongoose.Schema({
+  firstName: {
     type: String,
     required: true,
+    set: capitalize,
   },
-  LastName: {
+  lastName: {
     type: String,
     required: true,
+    set: capitalize,
   },
-  Email: {
+  email: {
     type: String,
     required: true,
+    immutable: true,
     unique: true,
+    lowercase: true,
   },
-  PhoneNumber: {
+  phoneNumber: {
     type: String,
     required: true,
   },
-  Status: {
+  status: {
     type: String,
+    enum: ["UNDERGRAD", "POSTGRAD"],
     required: true,
+    uppercase: true,
   },
-  CGPA: {
+  cgpa: {
     type: Number,
+    min: 0,
     required: true,
   },
-  Field: {
+  field: {
+    type: String,
+    required: true,
+    uppercase: true,
+  },
+  college: {
+    type: String,
+    required: true,
+    uppercase: true,
+  },
+  passport: {
     type: String,
     required: true,
   },
-  College: {
+  photo: {
     type: String,
     required: true,
   },
-  Passport: {
-    type: String,
-    required: true,
-  },
-  Photo: {
-    type: String,
-    required: true,
-  },
-  Approved: {
+  approved: {
     type: Boolean,
+    required: true,
+    default: false,
+  },
+  emailVerified: {
+    type: Boolean,
+    required: true,
+    default: false,
+  },
+  verificationCode: {
+    type: Number, 
+    default: codeGenerator
+  },
+  createdAt: {
+    type: Date,
+    default: () => Date.now(),
+    immutable: true,
+    required: true,
+  },
+  updatedAt: {
+    type: Date,
+    default: () => Date.now(),
     required: true,
   },
 });
 
-const Admin = mongoose.model("Admin", adminSchema);
+contributorSchema.statics.validate = (contributor) =>
+  schema.validate(contributor);
 
-module.exports = Admin;
+contributorSchema.pre("save", function (next) {
+  this.updatedAt = Date.now();
+  next();
+});
+
+module.exports = mongoose.model("Contributor", contributorSchema);
