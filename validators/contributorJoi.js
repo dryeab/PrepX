@@ -12,6 +12,7 @@ const schema = Joi.object({
   passport: Joi.required(),
   cv: Joi.required(),
   photo: Joi.required(),
+  password: Joi.string().required(),
 });
 
 module.exports = schema;

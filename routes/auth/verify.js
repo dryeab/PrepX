@@ -1,42 +1,69 @@
-const { Contributor } = require("../../models");
-const { BAD_REQUEST, NOT_FOUND, UNAUTHORIZED } = require("../../utils");
+/*
+  verify the verification code sent to a user
+*/
+
+const { Contributor, Admin } = require("../../models");
+const {
+  BAD_REQUEST,
+  NOT_FOUND,
+  UNAUTHORIZED,
+  generateToken,
+} = require("../../utils");
 
 const router = require("express").Router();
 
-// verify the verification code sent to a user
-router.post("/verify", async (req, res) => {
-  var { email, code } = req.body,
-    role = req.query.role;
+//#region contributor
+router.post("/contributor", async (req, res) => {
+  var { email, code } = req.body;
 
   if (!code) {
     return res.status(BAD_REQUEST).send("Code not found");
   }
 
-  var User = null;
-  switch (role && role.toLowerCase()) {
-    case "contributor":
-      User = Contributor;
-      break;
-    default:
-      return res.status(NOT_FOUND).send("Role not found");
-  }
-
-  var user = await User.findOne({
+  var contributor = await Contributor.findOne({
     email: email,
     emailVerified: false,
     verificationCode: code,
   });
 
-  if (!user) {
+  if (!contributor) {
     return res.status(UNAUTHORIZED).send("Invalid credentials");
   }
 
-  user.emailVerified = true;
-  user.save();
+  contributor.emailVerified = true;
+  contributor.save();
 
   res.send({
-    token: generateToken({ email: user.email, role: role.toLowerCase() }),
+    token: generateToken({ email: contributor.email, role: "contributor" }),
   });
 });
+//#endregion contributor
+
+//#region admin
+router.post("/admin", async (req, res) => {
+  var { email, code } = req.body;
+
+  if (!code) {
+    return res.status(BAD_REQUEST).send("Code not found");
+  }
+
+  var admin = await Admin.findOne({
+    email: email,
+    emailVerified: false,
+    verificationCode: code,
+  });
+
+  if (!admin) {
+    return res.status(UNAUTHORIZED).send("Invalid credentials");
+  }
+
+  admin.emailVerified = true;
+  admin.save();
+
+  res.send({
+    token: generateToken({ email: admin.email, role: "admin" }),
+  });
+});
+//#endregion admin
 
 module.exports = router;

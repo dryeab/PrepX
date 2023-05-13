@@ -15,8 +15,6 @@ const routes = require("./routes");
 
 app.use("/api", routes);
 
-const server = app.listen(process.env.PORT || 3000, () =>
-  console.log("Server started listening")
+app.listen(process.env.PORT, () =>
+  console.log(`Server started listening at ${process.env.PORT}`)
 );
-
-server.setTimeout(30_000_000, () => console.log("Time out passed"));

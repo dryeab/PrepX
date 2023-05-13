@@ -1,3 +1,4 @@
 const Contributor = require("./Contributor");
+const Admin = require("./Admin");
 
-module.exports = { Contributor };
+module.exports = { Contributor, Admin };

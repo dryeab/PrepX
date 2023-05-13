@@ -1,5 +1,4 @@
-const adminJoi = require("./adminJoi");
 const contributorJoi = require("./contributorJoi");
-const loginJoi = require("./loginJoi");
+const adminJoi = require("./adminJoi");
 
-module.exports = { adminJoi, contributorJoi, loginJoi };
+module.exports = { contributorJoi, adminJoi };

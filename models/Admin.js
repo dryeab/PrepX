@@ -1,8 +1,8 @@
 const { mongoose } = require("../config");
 const { capitalize, codeGenerator } = require("../utils");
-const { contributorJoi } = require("../validators");
+const { adminJoi } = require("../validators");
 
-const contributorSchema = mongoose.Schema({
+const adminSchema = mongoose.Schema({
   firstName: {
     type: String,
     required: true,
@@ -88,12 +88,11 @@ const contributorSchema = mongoose.Schema({
   },
 });
 
-contributorSchema.statics.validate = (contributor) =>
-  contributorJoi.validate(contributor);
+adminSchema.statics.validate = (admin) => adminJoi.validate(admin);
 
-contributorSchema.pre("save", function (next) {
+adminSchema.pre("save", function (next) {
   this.updatedAt = Date.now();
   next();
 });
 
-module.exports = mongoose.model("Contributor", contributorSchema);
+module.exports = mongoose.model("admin", adminSchema);

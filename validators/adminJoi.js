@@ -9,8 +9,10 @@ const schema = Joi.object({
   cgpa: Joi.number().required().min(0).max(5),
   field: Joi.string().required(),
   college: Joi.string().required(),
-  passport: Joi.string().required(),
-  photo: Joi.string().required(),
+  passport: Joi.required(),
+  cv: Joi.required(),
+  photo: Joi.required(),
+  password: Joi.string().required()
 });
 
 module.exports = schema;
