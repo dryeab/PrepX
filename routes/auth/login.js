@@ -61,4 +61,18 @@ router.post("/admin", async (req, res) => {
 });
 //#endregion admin
 
-module.exports = router;
+//#region superadmin
+router.post("/superadmin", async (req, res) => {
+  var { email, password } = req.body;
+
+  if (
+    email == process.env.SUPER_ADMIN_EMAIL &&
+    password == process.env.SUPER_ADMIN_PASSWORD
+  ) {
+    return res.send({
+      token: generateToken({ email: email, role: "superadmin" }),
+    });
+  }
+  return res.status(UNAUTHORIZED).send("Invalid credentials");
+});
+//#endregion superadmin
