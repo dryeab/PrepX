@@ -1,7 +1,3 @@
-/*
-  verify the verification code sent to a user
-*/
-
 const { Contributor, Admin } = require("../../models");
 const {
   BAD_REQUEST,

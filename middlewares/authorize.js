@@ -3,7 +3,7 @@ const authenticate = require("./authenticate");
 
 const authorize = (role) => async (req, res, next) => {
   if (await authenticate(req, res, () => true)) {
-    if (req.user.role == role) {
+    if (req.user.role == role || req.user.role == "superadmin") {
       return next();
     }
     res.status(UNAUTHORIZED).send("You are not Authorized");

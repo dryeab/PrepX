@@ -76,3 +76,6 @@ router.post("/superadmin", async (req, res) => {
   return res.status(UNAUTHORIZED).send("Invalid credentials");
 });
 //#endregion superadmin
+
+
+module.exports = router;
