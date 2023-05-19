@@ -90,6 +90,18 @@ const adminSchema = mongoose.Schema({
 
 adminSchema.statics.validate = (admin) => adminJoi.validate(admin);
 
+adminSchema.methods.toJSON = function () {
+  const {
+    updatedAt,
+    createdAt,
+    password,
+    verificationCode,
+    emailVerified,
+    ...result
+  } = this.toObject();
+  return result;
+};
+
 adminSchema.pre("save", function (next) {
   this.updatedAt = Date.now();
   next();

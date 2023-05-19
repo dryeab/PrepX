@@ -91,6 +91,18 @@ const contributorSchema = mongoose.Schema({
 contributorSchema.statics.validate = (contributor) =>
   contributorJoi.validate(contributor);
 
+contributorSchema.methods.toJSON = function () {
+  const {
+    updatedAt,
+    startedAt,
+    password,
+    verificationCode,
+    emailVerified,
+    ...result
+  } = this.toObject();
+  return result;
+};
+
 contributorSchema.pre("save", function (next) {
   this.updatedAt = Date.now();
   next();
