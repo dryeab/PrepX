@@ -12,6 +12,11 @@ const choiceSchema = mongoose.Schema({
   },
 });
 
+choiceSchema.methods.toJSON = function () {
+  const { _id, ...result } = this.toObject();
+  return result;
+};
+
 questionSchema = mongoose.Schema({
   q: {
     required: true,
@@ -50,7 +55,11 @@ questionSchema = mongoose.Schema({
 questionSchema.statics.validate = (question) => questionJoi.validate(question);
 
 questionSchema.methods.toJSON = function () {
-  const { updatedAt, startedAt, ...result } = this.toObject();
+  const { updatedAt, createdAt, ...result } = this.toObject();
+  result.choices = result.choices.map((choice) => {
+    const { _id, ...choiceResult } = choice;
+    return choiceResult;
+  });
   return result;
 };
 

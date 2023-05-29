@@ -6,4 +6,5 @@ module.exports = {
   UNAUTHORIZED: 401,
   FORBIDDEN: 403,
   SERVER_ERROR: 500,
+  NO_CONTENT: 204,
 };
