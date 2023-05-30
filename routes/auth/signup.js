@@ -67,8 +67,25 @@ router.post(
     { name: "cv", maxCount: 1 },
   ]),
   async (req, res) => {
+    // parse subjects to int array
+    if (req.body.subjects) {
+      req.body.subjects = req.body.subjects
+        .split(",")
+        .map((x) => Number.parseInt(x));
+    }
+
     // validate if the provided infomation is correct
-    var { error } = Admin.validate({ ...req.body, ...req.files });
+
+    // var x = await Admin.validate({ ...req.body, ...req.files });
+
+    var error;
+    try {
+      error = (await Admin.validate({ ...req.body, ...req.files })).error;
+    } catch (err) {
+      error = err;
+    }
+
+    // var { error } = await Admin.validate({ ...req.body, ...req.files });
 
     if (error != null) {
       destroyFiles(req.files); // destroy the uploaded files

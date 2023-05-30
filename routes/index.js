@@ -8,7 +8,7 @@ const router = require("express").Router();
 
 router.use("", authRoutes);
 router.use("", contriburorRoutes);
-router.use("", adminRoutes);
+router.use("/admins", adminRoutes);
 router.use("", questionRoutes);
 router.use("", subjectRoutes);
 

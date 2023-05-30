@@ -1,6 +1,7 @@
 const { mongoose } = require("../config");
 const Joi = require("joi");
 const { capitalize, codeGenerator } = require("../utils");
+const Subject = require("./Subject");
 
 //#region validation
 const adminJoi = Joi.object({
@@ -19,19 +20,21 @@ const adminJoi = Joi.object({
   subjects: Joi.array()
     .items(Joi.number().required())
     .required()
-    .custom(async (value, helper) => {
+    .external(async (value, helper) => {
       if (value.length == 0) {
-        return helper.message("subjects must have at least one element");
+        return helper.message("Subjects must have at least one element");
       }
-      for (x in value) {
-        if (!(await Subject.findOne({ code: x })))
-          return helper.message(`Subject with code ${code} doesn't exist`);
+      for (let i = 0; i < value.length; i++) {
+        const subject = await Subject.findOne({ code: value[i] });
+        if (!subject)
+          return helper.message(`Subject with code ${value[i]} doesn't exist`);
       }
-      return true;
+      return value;
     }),
 });
 //#endregion validation
 
+//#region model
 const adminSchema = mongoose.Schema({
   firstName: {
     type: String,
@@ -124,7 +127,8 @@ const adminSchema = mongoose.Schema({
   },
 });
 
-adminSchema.statics.validate = (admin) => adminJoi.validate(admin);
+adminSchema.statics.validate = async (admin) =>
+  await adminJoi.validateAsync(admin);
 
 adminSchema.methods.toJSON = function () {
   const {
@@ -133,6 +137,7 @@ adminSchema.methods.toJSON = function () {
     password,
     verificationCode,
     emailVerified,
+    __v,
     ...result
   } = this.toObject();
   return result;
@@ -142,5 +147,7 @@ adminSchema.pre("save", function (next) {
   this.updatedAt = Date.now();
   next();
 });
+
+//#endregion model
 
 module.exports = mongoose.model("admin", adminSchema);
