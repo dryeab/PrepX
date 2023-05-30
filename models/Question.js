@@ -1,5 +1,14 @@
 const mongoose = require("mongoose");
-const { questionJoi } = require("../validators");
+const Joi = require("joi");
+
+//#region validation
+const questionJoi = Joi.object({
+  q: Joi.string().required().min(1),
+  choices: Joi.array().required(),
+  answer: Joi.string().required().min(1),
+  description: Joi.string().min(1),
+});
+//#endregion validation
 
 const choiceSchema = mongoose.Schema({
   letter: {
