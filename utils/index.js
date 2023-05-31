@@ -13,7 +13,7 @@ module.exports = {
   generateToken,
   isImage,
   sendMail,
-  ...statusCodes,
+  statusCodes,
   destroyFiles,
   encryptPassword,
 };

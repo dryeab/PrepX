@@ -2,7 +2,7 @@ const { mongoose } = require("../config");
 const Joi = require("joi");
 const { capitalize, codeGenerator } = require("../utils");
 
-//#region validation
+// Validation
 const contributorJoi = Joi.object({
   firstName: Joi.string().required().min(1).max(20),
   lastName: Joi.string().required().min(1).max(20),
@@ -17,7 +17,6 @@ const contributorJoi = Joi.object({
   photo: Joi.required(),
   password: Joi.string().required(),
 });
-//#endregion validation
 
 const contributorSchema = mongoose.Schema({
   firstName: {

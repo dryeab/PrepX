@@ -1,12 +1,10 @@
 const Joi = require("joi");
 const { mongoose } = require("../config");
 
-//#region validation
 const subjectJoi = Joi.object({
   name: Joi.string().required(),
   code: Joi.number().required().min(0),
 });
-//#endregion validation
 
 const subjectSchema = new mongoose.Schema(
   {

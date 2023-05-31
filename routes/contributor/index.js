@@ -1,14 +1,10 @@
 const { authorize } = require("../../middlewares");
 const { Contributor } = require("../../models");
-
-const approveRoutes = require("./approve");
+const { NOT_FOUND, SERVER_ERROR } = require("../../utils").statusCodes;
 
 const router = require("express").Router();
 
-router.use("/contributors", approveRoutes);
-
-// get the list of Contributors
-router.get("/contributors", authorize("admin"), async (req, res) => {
+router.get("", authorize("admin"), async (req, res) => {
   const { approved } = req.query;
 
   var contriburors = [];
@@ -21,7 +17,25 @@ router.get("/contributors", authorize("admin"), async (req, res) => {
     contriburors = await Contributor.find({ emailVerified: true }).exec();
   }
 
-  return res.json(contriburors.map((contriburor) => contriburor.toJSON()));
+  return res.json(contriburors);
+});
+
+router.use("/approve", authorize("admin"), async (req, res) => {
+  const { email } = req.body;
+
+  if (
+    (await Contributor.find({ email: email, approved: false }).exec()).length
+  ) {
+    Contributor.findOneAndUpdate(
+      { email: email },
+      { approved: true },
+      { new: true }
+    )
+      .then((newContributor) => res.json(newContributor))
+      .catch((err) => res.status(SERVER_ERROR).send("Something went wrong"));
+  } else {
+    return res.status(NOT_FOUND).send("User not found");
+  }
 });
 
 module.exports = router;

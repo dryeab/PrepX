@@ -1,30 +1,13 @@
 const mongoose = require("mongoose");
 const Joi = require("joi");
 
-//#region validation
+// Validation
 const questionJoi = Joi.object({
   q: Joi.string().required().min(1),
-  choices: Joi.array().required(),
+  choices: Joi.array().items(Joi.required()).min(2).required(),
   answer: Joi.string().required().min(1),
   description: Joi.string().min(1),
 });
-//#endregion validation
-
-const choiceSchema = mongoose.Schema({
-  letter: {
-    type: String,
-    required: true,
-  },
-  text: {
-    required: true,
-    type: String,
-  },
-});
-
-choiceSchema.methods.toJSON = function () {
-  const { _id, ...result } = this.toObject();
-  return result;
-};
 
 questionSchema = mongoose.Schema({
   q: {
@@ -33,7 +16,18 @@ questionSchema = mongoose.Schema({
   },
   choices: {
     required: true,
-    type: [choiceSchema],
+    type: [
+      {
+        letter: {
+          type: String,
+          required: true,
+        },
+        text: {
+          required: true,
+          type: String,
+        },
+      },
+    ],
   },
   answer: {
     required: true,
@@ -65,10 +59,6 @@ questionSchema.statics.validate = (question) => questionJoi.validate(question);
 
 questionSchema.methods.toJSON = function () {
   const { updatedAt, createdAt, ...result } = this.toObject();
-  result.choices = result.choices.map((choice) => {
-    const { _id, ...choiceResult } = choice;
-    return choiceResult;
-  });
   return result;
 };
 

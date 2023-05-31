@@ -1,15 +1,10 @@
-const { Contributor, Admin } = require("../../models");
-const {
-  encryptPassword,
-  UNAUTHORIZED,
-  BAD_REQUEST,
-  generateToken,
-} = require("../../utils");
 const bcrypt = require("bcrypt");
+const { Contributor, Admin } = require("../../models");
+const { generateToken } = require("../../utils");
+const { UNAUTHORIZED, BAD_REQUEST } = require("../../utils").statusCodes;
 
 const router = require("express").Router();
 
-//#region contributor
 router.post("/contributor", async (req, res) => {
   var { email, password } = req.body;
 
@@ -35,9 +30,6 @@ router.post("/contributor", async (req, res) => {
   });
 });
 
-//#endregion contributor
-
-//#region admin
 router.post("/admin", async (req, res) => {
   var { email, password } = req.body;
 
@@ -59,9 +51,7 @@ router.post("/admin", async (req, res) => {
     token: generateToken({ email: email, role: "admin" }),
   });
 });
-//#endregion admin
 
-//#region superadmin
 router.post("/superadmin", async (req, res) => {
   var { email, password } = req.body;
 
@@ -75,7 +65,5 @@ router.post("/superadmin", async (req, res) => {
   }
   return res.status(UNAUTHORIZED).send("Invalid credentials");
 });
-//#endregion superadmin
-
 
 module.exports = router;

@@ -3,13 +3,13 @@ const Joi = require("joi");
 const { capitalize, codeGenerator } = require("../utils");
 const Subject = require("./Subject");
 
-//#region validation
+// Validation for Admin model
 const adminJoi = Joi.object({
-  firstName: Joi.string().required().min(1).max(20),
-  lastName: Joi.string().required().min(1).max(20),
+  firstName: Joi.string().required().min(1).max(40),
+  lastName: Joi.string().required().min(1).max(40),
   email: Joi.string().email().required(),
   phoneNumber: Joi.string().required(),
-  status: Joi.string().required(),
+  status: Joi.string().required().min(1),
   cgpa: Joi.number().required().min(0).max(5),
   field: Joi.string().required(),
   college: Joi.string().required(),
@@ -32,9 +32,7 @@ const adminJoi = Joi.object({
       return value;
     }),
 });
-//#endregion validation
 
-//#region model
 const adminSchema = mongoose.Schema({
   firstName: {
     type: String,
@@ -94,12 +92,15 @@ const adminSchema = mongoose.Schema({
     type: String,
     required: true,
   },
-  subjects: [
-    {
-      type: Number,
-      ref: "subject",
-    },
-  ],
+  subjects: {
+    required: true,
+    type: [
+      {
+        type: Number,
+        ref: "subject",
+      },
+    ],
+  },
   approved: {
     type: Boolean,
     required: true,
@@ -147,7 +148,5 @@ adminSchema.pre("save", function (next) {
   this.updatedAt = Date.now();
   next();
 });
-
-//#endregion model
 
 module.exports = mongoose.model("admin", adminSchema);

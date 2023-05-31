@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-const { FORBIDDEN } = require("../utils/statusCodes");
+const { FORBIDDEN } = require("../utils").statusCodes;
 
 const authenticate = async (req, res, next) => {
   const token = req.headers.token;

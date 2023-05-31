@@ -1,9 +1,10 @@
 const { Question } = require("../../models");
-const { SERVER_ERROR, NOT_FOUND, NO_CONTENT } = require("../../utils");
+const { SERVER_ERROR, NOT_FOUND, NO_CONTENT } =
+  require("../../utils").statusCodes;
 
 const router = require("express").Router();
 
-router.get("/questions", async (req, res) => {
+router.get("", async (req, res) => {
   const { approved } = req.query;
 
   if (approved == "true" || approved == "false") {
@@ -15,7 +16,7 @@ router.get("/questions", async (req, res) => {
   return res.send(await Question.find({}).exec());
 });
 
-router.post("/questions", async (req, res) => {
+router.post("", async (req, res) => {
   const { error } = Question.validate(req.body);
 
   if (error != null) {
@@ -29,11 +30,11 @@ router.post("/questions", async (req, res) => {
     .catch((err) => res.status(SERVER_ERROR).send(err));
 });
 
-router.put("/questions", async (req, res) => {
+router.put("", async (req, res) => {
   res.send(await Question.find({}).exec());
 });
 
-router.delete("/questions/:id", async (req, res) => {
+router.delete("/:id", async (req, res) => {
   Question.findOneAndDelete({ _id: req.params.id })
     .then((deleted) => {
       if (deleted == null) {

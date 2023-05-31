@@ -1,43 +1,35 @@
 const { authorize } = require("../../middlewares");
 const { Subject } = require("../../models");
-const {
-  NOT_FOUND,
-  BAD_REQUEST,
-  SERVER_ERROR,
-  CREATED,
-  NO_CONTENT,
-} = require("../../utils");
+const { NOT_FOUND, BAD_REQUEST, SERVER_ERROR, CREATED, NO_CONTENT } =
+  require("../../utils").statusCodes;
 
 const router = require("express").Router();
 
-router
-  .route("/subjects")
+router.get("", async (req, res) => {
+  res.send(await Subject.find().exec());
+});
 
-  .get(async (req, res) => {
-    res.send(await Subject.find().exec());
-  })
+router.post("", authorize("superadmin"), async (req, res) => {
+  const { error } = Subject.validate(req.body);
+  if (error) {
+    return res.status(BAD_REQUEST).send(error.details[0].message);
+  }
 
-  .post(authorize("superadmin"), async (req, res) => {
-    const { error } = Subject.validate(req.body);
-    if (error) {
-      return res.status(BAD_REQUEST).send(error.details[0].message);
-    }
+  if (await Subject.findOne({ code: req.body.code })) {
+    return res.status(BAD_REQUEST).send("Subject code already exists");
+  }
 
-    if (await Subject.findOne({ code: req.body.code })) {
-      return res.status(BAD_REQUEST).send("Subject code already exists");
-    }
+  if (await Subject.findOne({ name: req.body.name.toUpperCase() })) {
+    return res.status(BAD_REQUEST).send("Subject name already exists");
+  }
 
-    if (await Subject.findOne({ name: req.body.name.toUpperCase() })) {
-      return res.status(BAD_REQUEST).send("Subject name already exists");
-    }
-
-    Subject.create(req.body)
-      .then((subject) => res.status(CREATED).send(subject))
-      .catch((err) => res.status(SERVER_ERROR).send(err));
-  });
+  Subject.create(req.body)
+    .then((subject) => res.status(CREATED).send(subject))
+    .catch((err) => res.status(SERVER_ERROR).send(err));
+});
 
 router
-  .route("/subjects/:code")
+  .route("/:code")
 
   .get(async (req, res) => {
     const subject = await Subject.findOne({ code: req.params.code }).exec();

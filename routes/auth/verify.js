@@ -1,14 +1,9 @@
 const { Contributor, Admin } = require("../../models");
-const {
-  BAD_REQUEST,
-  NOT_FOUND,
-  UNAUTHORIZED,
-  generateToken,
-} = require("../../utils");
+const { generateToken } = require("../../utils");
+const { BAD_REQUEST, UNAUTHORIZED } = require("../../utils").statusCodes;
 
 const router = require("express").Router();
 
-//#region contributor
 router.post("/contributor", async (req, res) => {
   var { email, code } = req.body;
 
@@ -33,9 +28,7 @@ router.post("/contributor", async (req, res) => {
     token: generateToken({ email: contributor.email, role: "contributor" }),
   });
 });
-//#endregion contributor
 
-//#region admin
 router.post("/admin", async (req, res) => {
   var { email, code } = req.body;
 
@@ -60,6 +53,5 @@ router.post("/admin", async (req, res) => {
     token: generateToken({ email: admin.email, role: "admin" }),
   });
 });
-//#endregion admin
 
 module.exports = router;

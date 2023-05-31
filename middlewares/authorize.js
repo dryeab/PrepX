@@ -1,4 +1,4 @@
-const { UNAUTHORIZED } = require("../utils/statusCodes");
+const { UNAUTHORIZED } = require("../utils").statusCodes;
 const authenticate = require("./authenticate");
 
 const authorize = (role) => async (req, res, next) => {

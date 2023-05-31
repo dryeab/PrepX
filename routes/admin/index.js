@@ -1,6 +1,6 @@
-const { authorize, authenticate } = require("../../middlewares");
+const { authorize } = require("../../middlewares");
 const { Admin } = require("../../models");
-const { NOT_FOUND, SERVER_ERROR } = require("../../utils");
+const { NOT_FOUND, SERVER_ERROR } = require("../../utils").statusCodes;
 const { mongoose } = require("../../config");
 
 const router = require("express").Router();
@@ -9,8 +9,11 @@ router.get("", authorize("superadmin"), async (req, res) => {
   const { approved } = req.query;
 
   var admins = [];
-  if (approved == "false") {
-    admins = await Admin.find({ approved: false, emailVerified: true }).exec();
+  if (approved == "true" || approved == "false") {
+    admins = await Admin.find({
+      approved: approved == "true",
+      emailVerified: true,
+    }).exec();
   } else {
     admins = await Admin.find({ emailVerified: true }).exec();
   }

@@ -1,16 +1,11 @@
 const { Contributor, Admin } = require("../../models");
 const { upload } = require("../../middlewares");
-const {
-  sendMail,
-  CREATED,
-  BAD_REQUEST,
-  destroyFiles,
-  encryptPassword,
-} = require("../../utils");
+const { sendMail, destroyFiles, encryptPassword } = require("../../utils");
+const { CREATED, BAD_REQUEST, SERVER_ERROR } =
+  require("../../utils").statusCodes;
 
 const router = require("express").Router();
 
-//#region contributor
 router.post(
   "/contributor",
   upload.fields([
@@ -19,11 +14,10 @@ router.post(
     { name: "cv", maxCount: 1 },
   ]),
   async (req, res) => {
-    // validate if the provided infomation is correct
     var { error } = Contributor.validate({ ...req.body, ...req.files });
 
     if (error != null) {
-      destroyFiles(req.files); // destroy the uploaded files
+      destroyFiles(req.files); // if validation failed, destroy the uploaded files
       return res.status(BAD_REQUEST).send(error.message);
     }
 
@@ -52,13 +46,10 @@ router.post(
         sendMail(saved.email, saved.verificationCode);
         res.status(CREATED).send(`Email verification sent to ${saved.email}`);
       })
-      .catch((err) => res.status(500).send(err));
+      .catch((err) => res.status(SERVER_ERROR).send(err));
   }
 );
 
-//#endregion contributor
-
-//#region admin
 router.post(
   "/admin",
   upload.fields([
@@ -67,25 +58,16 @@ router.post(
     { name: "cv", maxCount: 1 },
   ]),
   async (req, res) => {
-    // parse subjects to int array
-    if (req.body.subjects) {
-      req.body.subjects = req.body.subjects
-        .split(",")
-        .map((x) => Number.parseInt(x));
+    if (Array.isArray(req.body.subjects)) {
+      req.body.subjects = req.body.subjects.map((x) => Number.parseInt(x));
     }
 
-    // validate if the provided infomation is correct
-
-    // var x = await Admin.validate({ ...req.body, ...req.files });
-
-    var error;
+    let error;
     try {
       error = (await Admin.validate({ ...req.body, ...req.files })).error;
     } catch (err) {
       error = err;
     }
-
-    // var { error } = await Admin.validate({ ...req.body, ...req.files });
 
     if (error != null) {
       destroyFiles(req.files); // destroy the uploaded files
@@ -120,6 +102,5 @@ router.post(
       .catch((err) => res.status(500).send(err));
   }
 );
-//#endregion admin
 
 module.exports = router;
