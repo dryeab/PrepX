@@ -77,6 +77,16 @@ const contributorSchema = mongoose.Schema({
     type: String,
     required: true,
   },
+  totalContribution: {
+    type: Number,
+    required: true,
+    default: 0,
+  },
+  paidContribution: {
+    type: Number,
+    required: true,
+    default: 0,
+  },
   approved: {
     type: Boolean,
     required: true,
